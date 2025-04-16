@@ -4,15 +4,18 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python" alt="Python Version" />
-  <img src="https://img.shields.io/badge/pip-ready-blue?logo=pypi" alt="PIP" />
-  <img src="https://numpy.org/images/logo.svg" alt="NumPy" height="28" />
-  <img src="https://ollama.com/public/ollama.png" alt="Ollama" />
+  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python 3.12" />
+  <img src="https://img.shields.io/badge/pip-ready-blue?logo=pypi&logoColor=white" alt="PIP Ready" />
+  <img src="https://img.shields.io/badge/NumPy-enabled-013243?logo=numpy&logoColor=white" alt="NumPy" />
+  <img src=https://img.shields.io/badge/-Ollama-000000?style=flat&logo=ollama&logoColor=white alt="Ollama" />
 </p>
+
 
 ---
 
 ## 🚀 Project Overview
+
+<img src="https://miro.medium.com/v2/resize:fit:1100/format:webp/1*a_qVjYbKuuJrWxoBOnEAbA.png" alt="" />
 
 This repository contains code to build a **RAG (Retrieval-Augmented Generation)** system from scratch using local models powered by [Ollama](https://ollama.com).
 
@@ -94,6 +97,3 @@ Have questions or suggestions? Reach out or contribute!
 
 ---
 
-<p align="center">
-  Made with ❤️ using local LLMs
-</p>
