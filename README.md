@@ -1,4 +1,3 @@
-
 <h1 align="center">🔍 RAG from Scratch</h1>
 <p align="center">
   Build your own <strong>Native Retrieval-Augmented Generation</strong> system using local models.
@@ -7,6 +6,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python" alt="Python Version" />
   <img src="https://img.shields.io/badge/pip-ready-blue?logo=pypi" alt="PIP" />
+  <img src="https://numpy.org/images/logo.svg" alt="NumPy" height="28" />
+  <img src="https://ollama.com/public/ollama.png" alt="Ollama" />
 </p>
 
 ---
@@ -21,18 +22,24 @@ The system retrieves relevant content from the GitLab Handbook and uses a local 
 
 ## 🛠️ Setup
 
-### 1. Create and activate conda environment:
+### 1. Clone the repository:
+```bash
+git clone https://github.com/IDEAS-Incubator/LLM_Bootcamp_Native_RAG
+cd LLM_Bootcamp_Native_RAG
+```
+
+### 2. Create and activate conda environment:
 ```bash
 conda create -n rag_scratch python=3.12
 conda activate rag_scratch
 ```
 
-### 2. Install dependencies:
+### 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Install Ollama and required models:
+### 4. Install Ollama and required models:
 ```bash
 # Install Ollama (follow instructions for your OS)
 # For Windows:
@@ -43,7 +50,7 @@ ollama pull nomic-embed-text
 ollama pull llama3:2
 ```
 
-### 4. Configure environment variables:
+### 5. Configure environment variables:
 
 ```bash
 copy .env.example .env
@@ -83,7 +90,7 @@ The knowledge base for this project is the **GitLab Handbook**, a comprehensive,
 
 Have questions or suggestions? Reach out or contribute!
 
-🔗 **Project URL**: [https://github.com/yourusername/rag-from-scratch](https://github.com/yourusername/rag-from-scratch)
+🔗 **Project URL**: [https://github.com/IDEAS-Incubator/LLM_Bootcamp_Native_RAG](https://github.com/IDEAS-Incubator/LLM_Bootcamp_Native_RAG)
 
 ---
 
