@@ -1,0 +1,7 @@
+.idea
+.vscode
+.env
+
+chunks/*.json
+
+__pycache__
