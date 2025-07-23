@@ -4,6 +4,7 @@ import textwrap
 import uuid
 from pathlib import Path
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -72,6 +73,43 @@ def create_file_for_each_chunk(
             indent=4,
         )
 
+#####################################Different Chunking Strategies########################################
+
+def naive_line_chunking(text: str) -> list[str]: 
+    """Chunk line by line"""
+    lines = text.split('\n')
+    return [line.strip() for line in lines if line.strip()]
+
+def fixed_token_chunking(text: str) -> list[str]:
+    """Chunk by fixed character size"""
+    return textwrap.wrap(text, CHUNK_SIZE)
+
+def paragraph_chunking(text: str) -> list[str]:
+    """Chunk by paragraph"""
+    paragraphs = re.split(r'\n\s*\n', text)
+    return [p.strip() for p in paragraphs if p.strip()]
+
+def sentence_chunking(text: str) -> list[str]:
+    """Chunk by sentence"""
+    # end with . ! ? or ... or \n\n
+    sentences = re.split(r'[.!?]', text)
+    return [sentence.strip() for sentence in sentences if sentence.strip()]
+
+def sliding_window_chunking(text: str, window_size: int = 750, overlap: int = 100) -> list[str]:
+    """Chunk by sliding window"""
+    chunks = []
+    start = 0
+    
+    while start < len(text):
+        end = start + window_size
+        chunk = text[start:end]
+        chunks.append(chunk)
+        start = end - overlap
+        
+    return chunks
+
+#############################################Finish Line##################################################
+
 
 def chunk_documents():
     documents = gather_handbook_documents()
@@ -83,9 +121,9 @@ def chunk_documents():
                 document_text
             )
 
-            for chunk_index, chunk in enumerate(
-                textwrap.wrap(remaining_text, CHUNK_SIZE), start=1
-            ):
+            chunks = fixed_token_chunking(remaining_text)
+
+            for chunk_index, chunk in enumerate(chunks, start=1):
                 create_file_for_each_chunk(
                     title, description, document, chunk_index, chunk
                 )
