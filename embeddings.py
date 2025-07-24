@@ -9,7 +9,7 @@ from ollama import Client
 load_dotenv()
 
 ollama_client = Client(host=os.environ.get("OLLAMA_HOST", "http://localhost:11434"))
-
+CUSTOM_EMBEDDING_DIM = 768
 
 def gather_chunk_files() -> list[str]:
     return [
@@ -31,6 +31,11 @@ for index, chunk_file in enumerate(chunk_files, start=1):
             prompt=chunk_data["chunk_text"],
         )
 
+        embedding = response["embedding"]
+
+        if CUSTOM_EMBEDDING_DIM > 0 and len(embedding) > CUSTOM_EMBEDDING_DIM:
+            embedding = embedding[:CUSTOM_EMBEDDING_DIM]
+            
         chunk_data["embeddings"] = response["embedding"]
         json.dump(chunk_data, c, indent=4)
 

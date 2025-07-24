@@ -50,7 +50,8 @@ def create_file_for_each_chunk(
 
     # Use Path to create a safe filename
     document_path = Path(document)
-    safe_filename = f"{document_path.with_suffix('').as_posix().replace('/', '_').replace('\\', '_')}-{chunk_index}.json"
+    clean_path = document_path.with_suffix('').as_posix().replace('/', '_').replace('\\', '_')
+    safe_filename = f"{clean_path}-{chunk_index}.json"
 
     # Ensure chunks directory exists
     chunks_dir = Path("chunks")
@@ -121,7 +122,7 @@ def chunk_documents():
                 document_text
             )
 
-            chunks = fixed_token_chunking(remaining_text)
+            chunks = sliding_window_chunking(remaining_text, window_size=750, overlap=100)
 
             for chunk_index, chunk in enumerate(chunks, start=1):
                 create_file_for_each_chunk(
