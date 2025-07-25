@@ -16,66 +16,58 @@ METADATA_MARK = "---"
 # Create chunks directory if it doesn't exist
 Path("chunks").mkdir(exist_ok=True)
 
-
-def gather_handbook_documents() -> list[str]:
-    return [
-        f"{directory}/{file}"
-        for directory, subdirectory, files in os.walk("handbook")
-        for file in files
-        if ".md" in file
-    ]
-
-
 def extract_document_metadata(document_text: str) -> tuple:
-    metadata_start_index = document_text.find(METADATA_MARK) + len(METADATA_MARK)
-    metadata_end_index = document_text.find(METADATA_MARK, metadata_start_index)
+    if document_text.startswith("---"):
+        metadata_start_index = document_text.find(METADATA_MARK) + len(METADATA_MARK)
+        metadata_end_index = document_text.find(METADATA_MARK, metadata_start_index)
 
-    metadata = document_text[metadata_start_index:metadata_end_index]
-    title = ""
-    description = ""
+        metadata = document_text[metadata_start_index:metadata_end_index]
+        title = ""
+        description = ""
 
-    for line in metadata.split("\n"):
-        if "title:" in line:
-            title = line.replace("title: ", "").replace('"', "").strip()
-        if "description:" in line:
-            description = line.replace("description: ", "").replace('"', "").strip()
+        for line in metadata.split("\n"):
+            if "title:" in line:
+                title = line.replace("title: ", "").replace('"', "").strip()
+            if "description:" in line:
+                description = line.replace("description: ", "").replace('"', "").strip()
 
-    return title, description, document_text[metadata_end_index:]
+        return title, description, document_text[metadata_end_index:]
+    else:
+        return "", "", document_text
 
 
 def create_file_for_each_chunk(
-    title: str, description: str, document: str, chunk_index: int, chunk: str
+    title: str, description: str, document_path: str, chunk_index: int, chunk: str, output_folder: str
 ) -> None:
     chunk_id = str(uuid.uuid4())
 
     # Use Path to create a safe filename
-    document_path = Path(document)
-    clean_path = document_path.with_suffix('').as_posix().replace('/', '_').replace('\\', '_')
-    safe_filename = f"{clean_path}-{chunk_index}.json"
+    document_name = Path(document_path).stem
+    safe_filename = f"{document_name}-{chunk_index}.json"
 
     # Ensure chunks directory exists
-    chunks_dir = Path("chunks")
-    chunks_dir.mkdir(parents=True, exist_ok=True)
+    Path(output_folder).mkdir(parents=True, exist_ok=True)
 
     # Full path to the chunk file
-    chunk_file_path = chunks_dir / safe_filename
+    chunk_file_path = os.path.join(output_folder, safe_filename)
 
-    with chunk_file_path.open("w", encoding="utf-8") as chunk_file:
+    with open(chunk_file_path, "w", encoding="utf-8") as chunk_file:
         json.dump(
             {
                 "id": chunk_id,
                 "title": title,
                 "description": description,
-                "document": document,
+                "document": document_path,
                 "chunk_text": chunk,
                 "chunk_token_count": len(chunk.split()),
+                "chunk_index": chunk_index
+
             },
             chunk_file,
             indent=4,
         )
 
-#####################################Different Chunking Strategies########################################
-
+#Different Chunking Strategies
 def naive_line_chunking(text: str) -> list[str]: 
     """Chunk line by line"""
     lines = text.split('\n')
@@ -109,25 +101,39 @@ def sliding_window_chunking(text: str, window_size: int = 750, overlap: int = 10
         
     return chunks
 
-#############################################Finish Line##################################################
+
+def chunk_single_document(document_path: str, chunking_function=fixed_token_chunking):
+
+    if not os.path.exists(document_path):
+        print(f"Document not found: {document_path}")
+        return
+    print(f"Processing: {document_path}")
+    
+    with open(document_path, encoding="utf-8") as f:
+        document_text = f.read()
+    
+    title, description, remaining_text = extract_document_metadata(document_text)
+    document_name = Path(document_path).stem
+    output_folder = f"chunks/{document_name}"
+
+    # Clear existing chunks
+    if os.path.exists(output_folder):
+        for file in os.listdir(output_folder):
+            if file.endswith('.json'):
+                os.remove(os.path.join(output_folder, file))
+    
+    chunks = chunking_function(remaining_text)
+    for chunk_index, chunk in enumerate(chunks, start=1):
+        create_file_for_each_chunk(title, description, document_path, chunk_index, chunk, output_folder)
+    
+    print(f"Processed: {document_path} and created {len(chunks)} chunks")
+
+if __name__ == "__main__":
+    document_to_process = "WIKI/data_science.md"
+    
+    if os.path.exists(document_to_process):
+        chunk_single_document(document_to_process, fixed_token_chunking)
+    else:
+        print(f"File not found: {document_to_process}")
 
 
-def chunk_documents():
-    documents = gather_handbook_documents()
-
-    for document in documents:
-        with open(document, encoding="utf-8") as d:
-            document_text = d.read()
-            title, description, remaining_text = extract_document_metadata(
-                document_text
-            )
-
-            chunks = sliding_window_chunking(remaining_text, window_size=750, overlap=100)
-
-            for chunk_index, chunk in enumerate(chunks, start=1):
-                create_file_for_each_chunk(
-                    title, description, document, chunk_index, chunk
-                )
-
-
-chunk_documents()

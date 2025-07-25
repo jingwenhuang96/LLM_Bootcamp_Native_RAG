@@ -9,18 +9,30 @@ from ollama import Client
 load_dotenv()
 
 ollama_client = Client(host=os.environ.get("OLLAMA_HOST", "http://localhost:11434"))
+
 CUSTOM_EMBEDDING_DIM = 768
 
-def gather_chunk_files() -> list[str]:
-    return [
-        f"{directory}/{file}"
-        for directory, subdirectory, files in os.walk("chunks")
-        for file in files
-        if ".json" in file
-    ]
+def gather_chunk_files(document_folders: list[str]) -> list[str]:
+    chunk_files = []
+    
+    for document_folder in document_folders:
+        folder_path = f"chunks/{document_folder}"
+        if os.path.exists(folder_path):
+            for file in os.listdir(folder_path):
+                if file.endswith(".json"):
+                    chunk_files.append(f"{folder_path}/{file}")
+    
+    return chunk_files
+
+# 指定要处理的多个文档文件夹
+documents_to_process = [
+    "artificial_intelligence",
+    "computer_vision", 
+    "data_science"
+]
 
 
-chunk_files = gather_chunk_files()
+chunk_files = gather_chunk_files(documents_to_process)
 
 for index, chunk_file in enumerate(chunk_files, start=1):
     chunk_data = json.load(open(chunk_file))
@@ -35,7 +47,7 @@ for index, chunk_file in enumerate(chunk_files, start=1):
 
         if CUSTOM_EMBEDDING_DIM > 0 and len(embedding) > CUSTOM_EMBEDDING_DIM:
             embedding = embedding[:CUSTOM_EMBEDDING_DIM]
-            
+
         chunk_data["embeddings"] = response["embedding"]
         json.dump(chunk_data, c, indent=4)
 
