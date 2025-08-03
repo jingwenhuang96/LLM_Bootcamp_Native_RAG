@@ -136,7 +136,7 @@ if __name__ == "__main__":
     if document_paths:
         for document_path in document_paths:
             print(f"Processing: {document_path}")
-            chunk_single_document(document_path, fixed_token_chunking)
+            chunk_single_document(document_path, sliding_window_chunking)
     else:
         print(f"No Markdown files found at: {document_pattern}")
 
