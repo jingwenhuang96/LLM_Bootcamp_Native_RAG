@@ -48,9 +48,13 @@ pip install -r requirements.txt
 # For Windows:
 winget install ollama
 
+# For linux:
+brew install ollama
+brew services start ollama
+
 # Pull required models
 ollama pull nomic-embed-text
-ollama pull llama3:2
+ollama pull llama3.2
 ```
 
 ### 5. Configure environment variables:

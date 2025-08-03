@@ -102,7 +102,7 @@ def sliding_window_chunking(text: str, window_size: int = 750, overlap: int = 10
     return chunks
 
 
-def chunk_single_document(document_path: str, chunking_function=fixed_token_chunking):
+def chunk_single_document(document_path: str, chunking_function=sliding_window_chunking):
 
     if not os.path.exists(document_path):
         print(f"Document not found: {document_path}")
@@ -129,7 +129,7 @@ def chunk_single_document(document_path: str, chunking_function=fixed_token_chun
     print(f"Processed: {document_path} and created {len(chunks)} chunks")
 
 if __name__ == "__main__":
-    document_to_process = "WIKI/data_science.md"
+    document_to_process = "WIKI/deep_learning.md"
     
     if os.path.exists(document_to_process):
         chunk_single_document(document_to_process, fixed_token_chunking)

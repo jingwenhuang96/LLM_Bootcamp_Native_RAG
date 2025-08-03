@@ -1,7 +1,8 @@
-.idea
-.vscode
+.idea/
+.vscode/
 .env
 
 chunks/*.json
+__pycache__/
 
-__pycache__
+Miniconda3-latest-Linux-x86_64.sh
