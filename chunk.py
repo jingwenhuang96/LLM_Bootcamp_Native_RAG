@@ -5,6 +5,7 @@ import uuid
 from pathlib import Path
 from dotenv import load_dotenv
 import re
+import glob
 
 load_dotenv()
 
@@ -102,7 +103,7 @@ def sliding_window_chunking(text: str, window_size: int = 750, overlap: int = 10
     return chunks
 
 
-def chunk_single_document(document_path: str, chunking_function=sliding_window_chunking):
+def chunk_single_document(document_path: str, chunking_function=fixed_token_chunking):
 
     if not os.path.exists(document_path):
         print(f"Document not found: {document_path}")
@@ -129,11 +130,14 @@ def chunk_single_document(document_path: str, chunking_function=sliding_window_c
     print(f"Processed: {document_path} and created {len(chunks)} chunks")
 
 if __name__ == "__main__":
-    document_to_process = "WIKI/deep_learning.md"
-    
-    if os.path.exists(document_to_process):
-        chunk_single_document(document_to_process, fixed_token_chunking)
+    document_pattern = "WIKI/*.md"
+    document_paths = glob.glob(document_pattern)
+
+    if document_paths:
+        for document_path in document_paths:
+            print(f"Processing: {document_path}")
+            chunk_single_document(document_path, fixed_token_chunking)
     else:
-        print(f"File not found: {document_to_process}")
+        print(f"No Markdown files found at: {document_pattern}")
 
 

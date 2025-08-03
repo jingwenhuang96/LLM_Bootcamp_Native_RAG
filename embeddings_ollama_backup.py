@@ -29,13 +29,19 @@ documents_to_process = [
     "artificial_intelligence",
     "computer_vision", 
     "data_science",
-    "deep_learning"
+    "deep_learning",
+    "machine_learning",
+    "natural_language_processing",
+    "robotics",
+    "neural_network",
 ]
 
 
 chunk_files = gather_chunk_files(documents_to_process)
 
 for index, chunk_file in enumerate(chunk_files, start=1):
+    print(f"Loading file: {chunk_file}")
+
     chunk_data = json.load(open(chunk_file))
 
     with open(chunk_file, "w") as c:

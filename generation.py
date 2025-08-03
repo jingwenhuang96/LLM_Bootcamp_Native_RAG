@@ -16,7 +16,7 @@ def generation(prompt_messages: List[Dict[str, str]]) -> str:
     ]
 
     response = ollama_client.chat(
-        model=os.environ.get("CHAT_COMPLETION_MODEL", "llama3.2"),
+        model=os.environ.get("CHAT_COMPLETION_MODEL", "llama3"),
         messages=messages,
         options={"temperature": 0},
     )
